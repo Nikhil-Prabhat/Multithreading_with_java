@@ -89,7 +89,7 @@ Thread.sleep(1000) -> 1000 ms -> Thread will sleep/go in waiting state for 1 s.
 ## Synchronisation : 
 Multi-threaded programs may often come to a situation where multiple threads try to access the same resources and finally produce erroneous and unforeseen results. So it needs to be made sure by some synchronization method that only one thread can access the resource at a given point in time. Java provides a way of creating threads and synchronizing their tasks using synchronized blocks. Synchronized blocks in Java are marked with the synchronized keyword. A synchronized block in Java is synchronized on some object. 
 
-# Why Synchronisation :
+### Why Synchronisation :
 
 When we start two or more threads within a program, there may be situation when multiple threads try to access the same resource. Hence, the issue arises when there is any shared resources.
 
@@ -171,7 +171,8 @@ class SyncDemo
 	} 
 }
 
-## Executor Service : ExecutorService is a JDK API that simplifies running tasks in asynchronous mode. Generally speaking, ExecutorService automatically provides a pool of threads and an API for assigning tasks to it.
+## Executor Service : 
+ExecutorService is a JDK API that simplifies running tasks in asynchronous mode. Generally speaking, ExecutorService automatically provides a pool of threads and an API for assigning tasks to it.
 
 The easiest way to create ExecutorService is to use one of the factory methods of the Executors class.
 For example, the following line of code will create a thread pool with 10 threads:
@@ -186,7 +187,7 @@ ExecutorService executorService2 = Executors.newFixedThreadPool(10);  // Creates
   
 ExecutorService executorService3 = Executors.newScheduledThreadPool(10); //Creates a scheduled thread pool executor with 10 threads. In scheduled thread //pool, we can schedule tasks of the threads.
 
-# Assigning tasks to ExecutorServices
+### Assigning tasks to ExecutorServices
 To assign a task to ExecutorService, we can use the following methods-
 
 	execute(Runnable task)
@@ -194,13 +195,13 @@ To assign a task to ExecutorService, we can use the following methods-
 	invokeAny(Collection<? extends Callable<T>> tasks)
 	invokeAll(Collection<? extends Callable<T>> tasks)  
 
-# Shutting Down an ExecutorService
+### Shutting Down an ExecutorService
 In general, the ExecutorService will not be automatically destroyed when there is no task to process. It will stay alive and wait for new work to do.In some cases this is very helpful, such as when an app needs to process tasks that appear on an irregular basis or the task quantity is not known at compile time.
 
 ## Callable Interface : 
 There are two ways of creating threads – one by extending the Thread class and other by creating a thread with a Runnable. However, one feature lacking in  Runnable is that we cannot make a thread return result when it terminates, i.e. when run() completes. For supporting this feature, the Callable interface is present in Java.
 
-# Difference between Callabe and Runnable Interface :
+### Difference between Callabe and Runnable Interface :
 
 For implementing Runnable, the run() method needs to be implemented which does not return anything, while for a Callable, the call() method needs to be implemented which returns a result on completion. Note that a thread can’t be created with a Callable, it can only be created with a Runnable.
 
