@@ -5,7 +5,7 @@ Threads can be created by using two mechanisms :
 
 Extending the Thread class 
 Implementing the Runnable Interface
-
+````
 // Java code for thread creation by extending
 // the Thread class
 class MultithreadingDemo extends Thread {
@@ -67,7 +67,7 @@ class Multithread {
 		}
 	}
 }
-
+````
 ## Thread States :
 
 * New 				- 	A thread is said to be in new state , when the thread is created but not executed yet.
