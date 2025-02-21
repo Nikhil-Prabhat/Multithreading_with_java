@@ -89,6 +89,8 @@ Thread.sleep(1000) -> 1000 ms -> Thread will sleep/go in waiting state for 1 s.
 ## Synchronisation : 
 Multi-threaded programs may often come to a situation where multiple threads try to access the same resources and finally produce erroneous and unforeseen results. So it needs to be made sure by some synchronization method that only one thread can access the resource at a given point in time. Java provides a way of creating threads and synchronizing their tasks using synchronized blocks. Synchronized blocks in Java are marked with the synchronized keyword. A synchronized block in Java is synchronized on some object. 
 
+Reference : https://www.baeldung.com/java-synchronized
+
 ### Why Synchronisation :
 
 When we start two or more threads within a program, there may be situation when multiple threads try to access the same resource. Hence, the issue arises when there is any shared resources.
