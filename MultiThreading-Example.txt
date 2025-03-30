@@ -1,0 +1,32 @@
+public void fetchDataFromDynamoAndSaveToElasticSearch(Long orgId) {
+        logger.info("Migration Started for the org : {}", orgId);
+        if (orgId != 432439L) {
+            long startTime = System.currentTimeMillis();
+
+            ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
+            List<DynamoElasticSearchField> fieldList = dynamoDBRepository.getFieldsFromDynamoWithPagination(orgId);
+            List<List<DynamoElasticSearchField>> fieldPartitionList = Lists.partition(fieldList, 1000);
+            saveFieldsWithBulkApi(fieldPartitionList, executorService);
+
+            long endTime = System.currentTimeMillis();
+            logger.info("Migration Ended for the org : {}", orgId);
+            logger.info("Total time taken in migration : {} for the orgId : {}", (endTime - startTime) / 1000, orgId);
+        }
+    }
+
+private void saveFieldsWithBulkApi(List<List<DynamoElasticSearchField>> fieldPartitionList, ExecutorService executorService) {
+        List<CompletableFuture<Void>> futures = fieldPartitionList.stream()
+                .map(fieldSubList -> CompletableFuture.runAsync(() -> {
+                    try {
+                        saveEachPartitionInBulkToElasticSearch(fieldSubList);
+                        Thread.sleep(1000);
+                    } catch (IOException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }, executorService))
+                .collect(toList());
+
+        // Wait for all tasks to complete
+        CompletableFuture<Void> completableFutureList = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+        completableFutureList.join();
+    }
