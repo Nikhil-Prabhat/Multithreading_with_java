@@ -30,3 +30,69 @@ private void saveFieldsWithBulkApi(List<List<DynamoElasticSearchField>> fieldPar
         CompletableFuture<Void> completableFutureList = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
         completableFutureList.join();
     }
+
+
+// Completable Future is best for asynchronous workflows and chaining tasks.
+
+// CompletableFuture Example (Non-blocking, Asynchronous Callbacks)
+import java.util.concurrent.CompletableFuture;
+
+public class CompletableFutureExample {
+    public static void main(String[] args) {
+        System.out.println("Fetching user data...");
+
+        // Asynchronous Task
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            sleep(2000); // Simulate delay
+            return "User: John Doe";
+        });
+
+        // Process result asynchronously
+        future.thenAccept(result -> System.out.println("Result: " + result));
+
+        System.out.println("Doing other work while waiting...");
+
+        sleep(3000); // Keep main thread alive
+    }
+
+    static void sleep(int ms) {
+        try { Thread.sleep(ms); } catch (InterruptedException e) { e.printStackTrace(); }
+    }
+}
+
+// ExecutorService Example (Blocking, Manual Control)
+import java.util.concurrent.*;
+
+public class ExecutorServiceExample {
+    public static void main(String[] args) {
+        System.out.println("Fetching user data...");
+
+        // Create a thread pool
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        // Submit task and get Future
+        Future<String> future = executor.submit(() -> {
+            sleep(2000); // Simulate delay
+            return "User: John Doe";
+        });
+
+        System.out.println("Doing other work while waiting...");
+
+        try {
+            String result = future.get(); // BLOCKS main thread here!
+            System.out.println("Result: " + result);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        executor.shutdown();
+    }
+
+    static void sleep(int ms) {
+        try { Thread.sleep(ms); } catch (InterruptedException e) { e.printStackTrace(); }
+    }
+}
+
+
+✔ Use CompletableFuture when you need non-blocking async execution with callbacks, chaining, and parallel execution.
+✔ Use ExecutorService when you need manual control over thread pools and traditional task execution.
