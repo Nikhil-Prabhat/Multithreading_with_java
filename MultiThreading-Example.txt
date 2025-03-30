@@ -96,3 +96,9 @@ public class ExecutorServiceExample {
 
 ✔ Use CompletableFuture when you need non-blocking async execution with callbacks, chaining, and parallel execution.
 ✔ Use ExecutorService when you need manual control over thread pools and traditional task execution.
+
+// Key Notes
+
+No, when you create a thread using Thread or Runnable, it is NOT managed by ForkJoinPool. Instead, it runs as an independent thread, managed by the JVM's default thread scheduler.
+
+ForkJoinPool.commonPool() is Java's default thread pool for async tasks.
