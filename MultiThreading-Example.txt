@@ -102,3 +102,86 @@ public class ExecutorServiceExample {
 No, when you create a thread using Thread or Runnable, it is NOT managed by ForkJoinPool. Instead, it runs as an independent thread, managed by the JVM's default thread scheduler.
 
 ForkJoinPool.commonPool() is Java's default thread pool for async tasks.
+
+## Key Points
+
+Q: How does Java by default handle thread management ?
+
+Java handles thread management using the Java Virtual Machine (JVM) and the underlying operating system's native threads. 
+  - When you create a new thread in Java (e.g., by extending Thread or implementing Runnable), you're asking the JVM to create a new native thread via the OS.
+  - Java uses preemptive multitasking, where the OS decides which thread runs and when.
+  - Thread scheduling is handled by the OS, not Java itself.
+  - The JVM maps Java threads to native threads and relies on the OS’s scheduler to manage time slices and CPU allocation.
+
+Java encourages using Executors for thread management rather than creating threads manually.
+ - The Executors framework provides:
+     * Thread pools
+     * Task scheduling
+     * Reuse of worker threads
+This approach avoids the overhead of creating too many threads.
+
+Q: Executors service also create native os threads ? 
+        Yes — ExecutorService ultimately uses native OS threads, just like when you create threads manually with new Thread().
+
+Q: What is the benefit of executors and java default thread management when both are using native threads only ?
+
+Yes, both use native threads, but the benefits of ExecutorService come from how it manages and organizes them — not from the thread type itself.
+
+Feature                                	new Thread()	                                ExecutorService
+Thread reuse	                     ❌ New thread each time	                ✅ Reuses threads via pool
+Performance	                     ❌ High overhead if many threads	        ✅ Efficient due to pooling
+Task queueing	                     ❌ You manage it	                        ✅ Built-in queue
+Scalability	                     ❌ Risk of thread explosion	        ✅ Controlled thread pool size
+Lifecycle mgmt	                     ❌ Hard to shut down cleanly	        ✅ shutdown() / awaitTermination()
+Advanced scheduling	             ❌ Manual	                                ✅ Built-in (ScheduledExecutorService)
+Customization	                     ❌ Basic	                                ✅ Custom ThreadFactory, RejectedExecutionHandler, etc.
+
+Q: Why Raw Threads are risky and how executor service fixes it ?
+
+That creates 1000 native threads, which:
+        Is expensive (memory + context switching)
+        Can cause OutOfMemoryError or performance issues
+        Gives you no control over concurrency limits
+
+        Only 10 threads are active at once.
+        Tasks are queued and executed efficiently.
+        Much better resource control, and predictable behavior.
+
+Q: If my cpu is octa core, can it create more than 8 threads ?
+
+You can create hundreds or thousands of threads, but only up to 8 threads can run simultaneously on an 8-core CPU (assuming 1 thread per core, and ignoring hyper-threading for now).
+The OS time-slices the CPU cores:
+        It rapidly switches between threads to simulate parallelism.
+        Unused threads wait in the ready queue or are blocked.
+
+Q: Plz explain forkJoinPool.
+
+It provides tools to help speed up parallel processing by attempting to use all available processor cores. It accomplishes this through a divide and conquer approach.
+In practice, this means that the framework first “forks,” recursively breaking the task into smaller independent subtasks until they are simple enough to run asynchronously.
+After that, the “join” part begins. The results of all subtasks are recursively joined into a single result. In the case of a task that returns void, the program simply waits until every subtask runs.
+To provide effective parallel execution, the fork/join framework uses a pool of threads called the ForkJoinPool. This pool manages worker threads of type ForkJoinWorkerThread.
+It is generally used in parallel streams and recursive tasks.
+
+Feature	                                        Benefit
+Work stealing	                Idle threads "steal" tasks from others, improving load balance
+Efficient CPU usage	        Perfect for multi-core CPUs
+Lightweight threads	        Uses fewer threads than ExecutorService for same throughput in CPU-bound work
+Common pool	                Default shared pool used in parallel streams and CompletableFuture
+
+Q: What is the benefit that we get when we use executors with completablefuture ?
+
+When we do "CompletableFuture.runAsync(() -> doWork());"
+Java runs it using the common ForkJoinPool — same one used by parallelStream().
+
+But when we use executor service, then we decide:
+        How many threads to use
+        What kind of threads (daemon, priority, etc.)
+        Which tasks get isolated resources
+CompletableFuture.runAsync(() -> doWork(), executor);
+
+ForkJoinPool.commonPool() is shared — if you flood it with tasks, you could:
+        Starve other parts of your app (like parallel streams)
+        Get poor performance due to overload
+        Custom executor = isolated and safe.
+
+
