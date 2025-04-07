@@ -107,7 +107,7 @@ ForkJoinPool.commonPool() is Java's default thread pool for async tasks.
 
 Q: How does Java by default handle thread management ?
 
-Java handles thread management using the Java Virtual Machine (JVM) and the underlying operating system's native threads. 
+Java handles thread management using the Java Virtual Machine (JVM) and the underlying operating system's native threads, managed by JVM default thread scheduler. 
   - When you create a new thread in Java (e.g., by extending Thread or implementing Runnable), you're asking the JVM to create a new native thread via the OS.
   - Java uses preemptive multitasking, where the OS decides which thread runs and when.
   - Thread scheduling is handled by the OS, not Java itself.
