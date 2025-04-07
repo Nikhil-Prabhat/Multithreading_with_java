@@ -31,6 +31,9 @@ private void saveFieldsWithBulkApi(List<List<DynamoElasticSearchField>> fieldPar
         completableFutureList.join();
     }
 
+// One example of type safety
+List<String> names = List.of("Alice", "Bob");
+String[] arr = names.toArray(new String[0]); // Returns String[]
 
 // Completable Future is best for asynchronous workflows and chaining tasks.
 
