@@ -187,4 +187,9 @@ ForkJoinPool.commonPool() is shared — if you flood it with tasks, you could:
         Get poor performance due to overload
         Custom executor = isolated and safe.
 
+Virtual Threads :
+
+Virtual threads (introduced in Java 21 as a stable feature, part of Project Loom) are lightweight threads managed by the Java Virtual Machine (JVM), not by the OS.
+        - They are much cheaper than traditional threads.
+        - You can create millions of virtual threads without killing performance or memory.
 
