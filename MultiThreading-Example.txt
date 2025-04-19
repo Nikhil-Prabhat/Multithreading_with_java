@@ -193,3 +193,39 @@ Virtual threads (introduced in Java 21 as a stable feature, part of Project Loom
         - They are much cheaper than traditional threads.
         - You can create millions of virtual threads without killing performance or memory.
 
+## Semaphore Example
+
+// UserService.java
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    // Allow only 3 threads at a time
+    private final Semaphore semaphore = new Semaphore(3);
+
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public List<User> getAllUsers() {
+        try {
+            semaphore.acquire(); // Acquire permit
+            System.out.println("Thread " + Thread.currentThread().getName() + " acquired permit");
+
+            // Simulate DB delay
+            Thread.sleep(1000);
+
+            return userRepository.findAll();
+
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Thread interrupted", e);
+        } finally {
+            semaphore.release(); // Always release
+            System.out.println("Thread " + Thread.currentThread().getName() + " released permit");
+        }
+    }
+}
+
+
