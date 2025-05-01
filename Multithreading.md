@@ -91,6 +91,56 @@ Multi-threaded programs may often come to a situation where multiple threads try
 
 Reference : https://www.baeldung.com/java-synchronized
 
+class MyClass {
+    // Object-level synchronized method
+    public synchronized void objectLevelMethod(String threadName) {
+        System.out.println(threadName + " entered objectLevelMethod");
+        try {
+            Thread.sleep(1000); // Simulate work
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(threadName + " exiting objectLevelMethod");
+    }
+
+    // Class-level synchronized method
+    public static synchronized void classLevelMethod(String threadName) {
+        System.out.println(threadName + " entered classLevelMethod");
+        try {
+            Thread.sleep(1000); // Simulate work
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(threadName + " exiting classLevelMethod");
+    }
+}
+
+public class SyncExample {
+    public static void main(String[] args) {
+        MyClass obj1 = new MyClass();
+        MyClass obj2 = new MyClass();
+
+        // Threads for object-level synchronization (on obj1)
+        Thread t1 = new Thread(() -> obj1.objectLevelMethod("Thread-1"));
+        Thread t2 = new Thread(() -> obj1.objectLevelMethod("Thread-2"));
+
+        // Threads for class-level synchronization (on MyClass.class)
+        Thread t3 = new Thread(() -> MyClass.classLevelMethod("Thread-3"));
+        Thread t4 = new Thread(() -> MyClass.classLevelMethod("Thread-4"));
+
+        // Start threads
+        t1.start(); // Will block t2
+        t2.start();
+
+        // Delay to show separate sync type
+        try { Thread.sleep(200); } catch (InterruptedException e) {}
+
+        t3.start(); // Will block t4
+        t4.start();
+    }
+}
+
+
 ### Why Synchronisation :
 
 When we start two or more threads within a program, there may be situation when multiple threads try to access the same resource. Hence, the issue arises when there is any shared resources.
