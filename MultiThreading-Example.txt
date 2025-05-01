@@ -228,4 +228,42 @@ public class UserService {
     }
 }
 
+** Exception Handling using Completable Future
+
+import java.util.concurrent.CompletableFuture;
+
+public class ExceptionallyExample {
+    public static void main(String[] args) {
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            if (true) throw new RuntimeException("Something went wrong!");
+            return "Success";
+        }).exceptionally(ex -> {
+            System.out.println("Handled: " + ex.getMessage());
+            return "Fallback value";
+        });
+
+        System.out.println("Result: " + future.join()); // Output: Fallback value
+    }
+}
+
+import java.util.concurrent.CompletableFuture;
+
+public class HandleExample {
+    public static void main(String[] args) {
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            if (true) throw new RuntimeException("Failure in task");
+            return "OK";
+        }).handle((result, ex) -> {
+            if (ex != null) {
+                System.out.println("Handled error: " + ex.getMessage());
+                return "Recovered in handle";
+            } else {
+                return result;
+            }
+        });
+
+        System.out.println("Result: " + future.join()); // Output: Recovered in handle
+    }
+}
+
 
